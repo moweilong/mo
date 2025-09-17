@@ -7,6 +7,7 @@ import (
 
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
+	gormlogger "gorm.io/gorm/logger"
 )
 
 type Field = zapcore.Field
@@ -17,7 +18,6 @@ type ContextExtractors map[string]func(context.Context) string
 type Logger interface {
 	Debugf(format string, args ...any)
 	Debugw(msg string, keyvals ...any)
-	Info(msg string, keyvals ...Field)
 	Infof(format string, args ...any)
 	Infow(msg string, keyvals ...any)
 	Warnf(format string, args ...any)
@@ -31,6 +31,8 @@ type Logger interface {
 	W(ctx context.Context) Logger
 	AddCallerSkip(skip int) Logger
 	Sync()
+
+	gormlogger.Interface
 }
 
 // zapLogger 是 Logger 接口的具体实现. 它底层封装了 zap.Logger.
@@ -78,6 +80,11 @@ func NewLogger(opts *Options, options ...Option) *zapLogger {
 	if err := zapLevel.UnmarshalText([]byte(opts.Level)); err != nil {
 		// 如果指定了非法的日志级别，则默认使用 info 级别
 		zapLevel = zapcore.InfoLevel
+	}
+
+	// 如果指定了非法的日志格式，则默认使用 console 格式
+	if opts.Format == "" || (opts.Format != jsonFormat && opts.Format != consoleFormat) {
+		opts.Format = consoleFormat
 	}
 
 	// 创建一个默认的 encoder 配置
@@ -153,7 +160,6 @@ func (l *zapLogger) Options() *Options {
 
 func Debugf(format string, args ...any) { std.Debugf(format, args...) }
 func Debugw(msg string, keyvals ...any) { std.Debugw(msg, keyvals...) }
-func Info(msg string, keyvals ...Field) { std.Info(msg, keyvals...) }
 func Infof(format string, args ...any)  { std.Infof(format, args...) }
 func Infow(msg string, keyvals ...any)  { std.Infow(msg, keyvals...) }
 func Warnf(format string, args ...any)  { std.Warnf(format, args...) }
@@ -167,9 +173,9 @@ func Fatalw(msg string, keyvals ...any) { std.Fatalw(msg, keyvals...) }
 
 func (l *zapLogger) Debugf(format string, args ...any) { l.z.Sugar().Debugf(format, args...) }
 func (l *zapLogger) Debugw(msg string, keyvals ...any) { l.z.Sugar().Debugw(msg, keyvals...) }
-func (l *zapLogger) Info(msg string, keyvals ...Field) { l.z.Info(msg, keyvals...) }
 func (l *zapLogger) Infof(format string, args ...any)  { l.z.Sugar().Infof(format, args...) }
 func (l *zapLogger) Infow(msg string, keyvals ...any)  { l.z.Sugar().Infow(msg, keyvals...) }
+
 func (l *zapLogger) Warnf(format string, args ...any)  { l.z.Sugar().Warnf(format, args...) }
 func (l *zapLogger) Warnw(msg string, keyvals ...any)  { l.z.Sugar().Warnw(msg, keyvals...) }
 func (l *zapLogger) Errorf(format string, args ...any) { l.z.Sugar().Errorf(format, args...) }

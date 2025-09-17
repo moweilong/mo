@@ -26,7 +26,6 @@ const (
 // Options 包含与日志相关的配置项。
 type Options struct {
 	OutputPaths       []string `json:"output-paths"       mapstructure:"output-paths"`
-	ErrorOutputPaths  []string `json:"error-output-paths" mapstructure:"error-output-paths"`
 	Level             string   `json:"level"              mapstructure:"level"`
 	Format            string   `json:"format"             mapstructure:"format"`
 	DisableCaller     bool     `json:"disable-caller"     mapstructure:"disable-caller"`
@@ -42,11 +41,10 @@ func NewOptions() *Options {
 		Level:             zapcore.InfoLevel.String(),
 		DisableCaller:     false,
 		DisableStacktrace: false,
-		Format:            consoleFormat,
+		Format:            jsonFormat,
 		EnableColor:       false,
 		Development:       false,
 		OutputPaths:       []string{"stdout"},
-		ErrorOutputPaths:  []string{"stderr"},
 	}
 }
 
@@ -76,7 +74,6 @@ func (o *Options) AddFlags(fs *pflag.FlagSet) {
 	fs.StringVar(&o.Format, flagFormat, o.Format, "日志输出 `FORMAT`，支持文本或 json 格式。")
 	fs.BoolVar(&o.EnableColor, flagEnableColor, o.EnableColor, "在文本格式日志中启用 ANSI 颜色输出。")
 	fs.StringSliceVar(&o.OutputPaths, flagOutputPaths, o.OutputPaths, "日志输出路径。")
-	fs.StringSliceVar(&o.ErrorOutputPaths, flagErrorOutputPaths, o.ErrorOutputPaths, "日志错误输出路径。")
 	fs.BoolVar(
 		&o.Development,
 		flagDevelopment,
