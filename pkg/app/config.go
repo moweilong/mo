@@ -11,7 +11,7 @@ import (
 	"github.com/spf13/viper"
 	"k8s.io/client-go/util/homedir"
 
-	log "github.com/moweilong/mo/pkg/mlog"
+	"github.com/moweilong/mo/pkg/mlog"
 )
 
 const configFlagName = "config"
@@ -51,14 +51,14 @@ func AddConfigFlag(fs *pflag.FlagSet, name string, watch bool) {
 		}
 
 		if err := viper.ReadInConfig(); err != nil {
-			log.Debugw("Failed to read configuration file", "file", cfgFile, "err", err)
+			mlog.Debugw("Failed to read configuration file", "file", cfgFile, "err", err)
 		}
-		log.Debugw("Success to read configuration file", "file", viper.ConfigFileUsed())
+		mlog.Debugw("Success to read configuration file", "file", viper.ConfigFileUsed())
 
 		if watch {
 			viper.WatchConfig()
 			viper.OnConfigChange(func(e fsnotify.Event) {
-				log.Debugw("Config file changed", "name", e.Name)
+				mlog.Debugw("Config file changed", "name", e.Name)
 			})
 		}
 	})
@@ -66,7 +66,7 @@ func AddConfigFlag(fs *pflag.FlagSet, name string, watch bool) {
 
 func PrintConfig() {
 	for _, key := range viper.AllKeys() {
-		log.Debugw(fmt.Sprintf("CFG: %s=%v", key, viper.Get(key)))
+		mlog.Debugw(fmt.Sprintf("CFG: %s=%v", key, viper.Get(key)))
 	}
 }
 

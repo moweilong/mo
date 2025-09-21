@@ -14,7 +14,7 @@ import (
 	cliflag "k8s.io/component-base/cli/flag"
 	"k8s.io/component-base/term"
 
-	log "github.com/moweilong/mo/pkg/mlog"
+	"github.com/moweilong/mo/pkg/mlog"
 	genericoptions "github.com/moweilong/mo/pkg/options"
 	"github.com/moweilong/mo/pkg/version"
 )
@@ -270,8 +270,8 @@ func (app *App) runCommand(cmd *cobra.Command, args []string) error {
 	app.initializeLogger()
 
 	if !app.silence {
-		log.Infow("Starting application", "name", app.name, "version", version.Get().ToJSON())
-		log.Infow("Golang settings", "GOGC", os.Getenv("GOGC"), "GOMAXPROCS", os.Getenv("GOMAXPROCS"), "GOTRACEBACK", os.Getenv("GOTRACEBACK"))
+		mlog.Infow("Starting application", "name", app.name, "version", version.Get().ToJSON())
+		mlog.Infow("Golang settings", "GOGC", os.Getenv("GOGC"), "GOMAXPROCS", os.Getenv("GOMAXPROCS"), "GOTRACEBACK", os.Getenv("GOTRACEBACK"))
 		if !app.noConfig {
 			PrintConfig()
 		} else if app.options != nil {
@@ -307,7 +307,7 @@ func formatBaseName(name string) string {
 
 // initializeLogger sets up the logging system based on the configuration.
 func (app *App) initializeLogger() {
-	logOptions := log.NewOptions()
+	logOptions := mlog.NewOptions()
 
 	// Configure logging options from viper
 	if viper.IsSet("log.disable-caller") {
@@ -327,5 +327,5 @@ func (app *App) initializeLogger() {
 	}
 
 	// Initialize logging with custom context extractors
-	log.Init(logOptions, log.WithContextExtractor(app.contextExtractors))
+	mlog.Init(logOptions, mlog.WithContextExtractor(app.contextExtractors))
 }

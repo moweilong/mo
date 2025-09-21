@@ -105,7 +105,7 @@ build.%: ## 编译 Go 源码.
 	$(eval ARCH := $(word 2,$(subst _, ,$(PLATFORM))))
 	@echo "===========> Building binary $(COMMAND) $(VERSION) for $(OS) $(ARCH)"
 	@mkdir -p $(OUTPUT_DIR)/platforms/$(OS)/$(ARCH)
-	@CGO_ENABLED=1 GOOS=$(OS) GOARCH=$(ARCH) go build $(GO_BUILD_FLAGS) \
+	@CGO_ENABLED=0 GOOS=$(OS) GOARCH=$(ARCH) go build $(GO_BUILD_FLAGS) \
 		-o $(OUTPUT_DIR)/platforms/$(OS)/$(ARCH)/$(COMMAND)$(GO_OUT_EXT) \
 		$(ROOT_PACKAGE)/cmd/$(COMMAND)
 
@@ -141,6 +141,14 @@ cli: # install cli tools
 api: # generate protobuf api go code
 	@cd $(PROJ_ROOT_DIR)/pkg/api && \
 	buf generate
+
+.PHONY: wire
+wire: # generate wire code
+	@wire ./internal/apiserver
+
+.PHONY: run
+run: ## Run the server.
+	@$(OUTPUT_DIR)/platforms/$(GOOS)/$(GOARCH)/$(BINS)
 
 help: Makefile  ## Show available targets and usage.
 	@awk 'BEGIN {FS = ":.*##"; printf "\nUsage:\n  make \033[36m<TARGETS> <OPTIONS>\033[0m\n\n\033[35mTargets:\033[0m\n"} /^[0-9A-Za-z._-]+:.*?##/ { printf "  \033[36m%-45s\033[0m %s\n", $$1, $$2 } /^\$$\([0-9A-Za-z_-]+\):.*?##/ { gsub("_","-", $$1); printf "  \033[36m%-45s\033[0m %s\n", tolower(substr($$1, 3, length($$1)-7)), $$2 } /^##@/{ printf "\n\033[1m%s\033[0m\n", substr($$0, 5) } ' Makefile #$(MAKEFILE_LIST)

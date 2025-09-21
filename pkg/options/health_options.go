@@ -7,7 +7,7 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/spf13/pflag"
 
-	log "github.com/moweilong/mo/pkg/mlog"
+	"github.com/moweilong/mo/pkg/mlog"
 )
 
 var _ IOptions = (*HealthOptions)(nil)
@@ -52,9 +52,9 @@ func (o *HealthOptions) ServeHealthCheck() {
 		r.HandleFunc("/debug/pprof/{_:.*}", pprof.Index)
 	}
 
-	log.Infow("Starting health check server", "path", o.HealthCheckPath, "addr", o.HealthCheckAddress)
+	mlog.Infow("Starting health check server", "path", o.HealthCheckPath, "addr", o.HealthCheckAddress)
 	if err := http.ListenAndServe(o.HealthCheckAddress, r); err != nil {
-		log.Fatalf("Error serving health check endpoint: %v", err)
+		mlog.Fatalf("Error serving health check endpoint: %v", err)
 	}
 }
 
