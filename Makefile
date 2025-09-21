@@ -43,6 +43,8 @@ GO_LDFLAGS += \
     -X $(VERSION_PACKAGE).gitTreeState=$(GIT_TREE_STATE) \
     -X $(VERSION_PACKAGE).buildDate=$(shell date -u +'%Y-%m-%dT%H:%M:%SZ')
 
+GO_BUILD_FLAGS += -ldflags "$(GO_LDFLAGS)"
+
 ifeq ($(GOOS),windows)
     GO_OUT_EXT := .exe
 endif
