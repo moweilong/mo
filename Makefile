@@ -138,11 +138,26 @@ cli: # install cli tools
 	# @pnpm install -g ts-proto
 	@go install github.com/bufbuild/buf/cmd/buf@latest
 	@go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest
+	@go install github.com/google/wire/cmd/wire@latest
+	@go install entgo.io/ent/cmd/ent@latest
 
 .PHONY: api
 api: # generate protobuf api go code
-	@cd $(PROJ_ROOT_DIR)/pkg/api && \
+	@cd $(PROJ_ROOT_DIR)/api && \
+    buf dep update && \
 	buf generate
+
+.PHONY: ent
+ent: # generate ent code
+ifneq ("$(wildcard ./internal/apiserver/model/ent)","")
+	@ent generate \
+				--feature privacy \
+				--feature entql \
+				--feature sql/modifier \
+				--feature sql/upsert \
+				--feature sql/lock \
+				./internal/apiserver/model/ent/schema
+endif
 
 .PHONY: wire
 wire: # generate wire code

@@ -6,7 +6,7 @@ import (
 	"gorm.io/gorm"
 )
 
-// 定义一个Registry类型用于管理模型注册  
+// 定义一个Registry类型用于管理模型注册
 type Registry struct {
 	models []interface{}
 }
@@ -16,7 +16,7 @@ var (
 	once           sync.Once
 )
 
-// NewRegistry 创建并返回一个新的Registry实例  
+// NewRegistry 创建并返回一个新的Registry实例
 func NewRegistry() *Registry {
 	return &Registry{
 		models: make([]interface{}, 0),
@@ -30,7 +30,7 @@ func Register(model interface{}) {
 	globalRegistry.Register(model)
 }
 
-// Register 添加新的模型到Registry  
+// Register 添加新的模型到Registry
 func (r *Registry) Register(model interface{}) {
 	r.models = append(r.models, model)
 }

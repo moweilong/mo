@@ -6,7 +6,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/moweilong/mo/pkg/core"
 
-	apiv1 "github.com/moweilong/mo/pkg/api/gen/go/v1"
+	apiv1 "github.com/moweilong/mo/api/gen/go/health/service/v1"
 	"github.com/moweilong/mo/pkg/mlog"
 )
 
