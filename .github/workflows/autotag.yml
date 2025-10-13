@@ -27,7 +27,7 @@ jobs:
       - name: Create Submodule Tags
         run: |
           main_tag=${GITHUB_REF#refs/tags/}
-          directories=("entx" "cmd")
+          directories=("entx")
           
           for dir in "${directories[@]}"; do
             find "$dir" -name "go.mod" | sort -u | while read -r file; do
@@ -56,6 +56,18 @@ jobs:
           
           # 使用base64编码避免特殊字符问题
           echo "RELEASE_NOTES=$(base64 -w 0 release_notes.md)" >> $GITHUB_ENV
+
+      - name: Commit CHANGELOG Updates
+        run: |
+          main_tag=${GITHUB_REF#refs/tags/}
+          git add CHANGELOG.md
+          # 检查是否有变更
+          if git diff --staged --quiet; then
+            echo "No changes to CHANGELOG.md"
+          else
+            git commit -m "docs: update CHANGELOG.md for $main_tag"
+            git push origin ${{ github.ref_name }}
+          fi
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
