@@ -45,7 +45,9 @@ jobs:
         id: release_notes
         run: |
           # 提取两个标签之间的提交记录
+          # 处理首次发布没有上一个标签的情况
           if [ $(git tag --list | wc -l) -lt 2 ]; then
+            # 如果标签数量少于2个，显示所有提交
             echo "All changes in this release:" > release_notes.md
             git log --pretty=format:"- %s" >> release_notes.md
           else
@@ -54,8 +56,9 @@ jobs:
             git log --pretty=format:"- %s" $prev_tag..$main_tag >> release_notes.md
           fi
           
-          # 使用base64编码避免特殊字符问题
-          echo "RELEASE_NOTES=$(base64 -w 0 release_notes.md)" >> $GITHUB_ENV
+          # 使用不同的分隔符避免冲突          echo 'RELEASE_NOTES<<___EOF___' >> $GITHUB_ENV
+          cat release_notes.md >> $GITHUB_ENV
+          echo '___EOF___' >> $GITHUB_ENV
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
