@@ -1,0 +1,61 @@
+name: Manage Tags and Changelog
+
+on:
+  push:
+    tags:
+    - 'v*'
+  workflow_dispatch: # 允许手动触发
+
+env:
+  TZ: Asia/Shanghai
+  GITHUB_TOKEN: ${{ secrets.MO_TOKEN }}
+
+jobs:
+  Manage-Releases:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git
+        run: |
+          git config --global user.email "kalandramo@gmail.com"
+          git config --global user.name "moweilong"
+
+      - name: Create Submodule Tags
+        run: |
+          main_tag=${GITHUB_REF#refs/tags/}
+          directories=("entx" "cmd")
+          
+          for dir in "${directories[@]}"; do
+            find "$dir" -name "go.mod" | sort -u | while read -r file; do
+              submodule_path=$(dirname "$file")
+              submodule_tag="${submodule_path}/${main_tag}"
+              
+              if ! git rev-parse "$submodule_tag" >/dev/null 2>&1; then
+                git tag "$submodule_tag"
+                git push origin "$submodule_tag"
+              fi
+            done
+          done
+
+      - name: Generate Release Notes
+        id: release_notes
+        run: |
+          # 提取两个标签之间的提交记录
+          prev_tag=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+          echo "Changes since $prev_tag:" > release_notes.md
+          git log --pretty=format:"- %s" $prev_tag..$main_tag >> release_notes.md
+          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
+          cat release_notes.md >> $GITHUB_ENV
+          echo "EOF" >> $GITHUB_ENV
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          body: ${{ env.RELEASE_NOTES }}
+          files: |
+            CHANGELOG.md
+          tag_name: ${{ github.ref_name }}
