@@ -60,7 +60,21 @@ jobs:
       - name: Commit CHANGELOG Updates
         run: |
           main_tag=${GITHUB_REF#refs/tags/}
+          
+          # 确保CHANGELOG.md文件存在
+          if [ ! -f "CHANGELOG.md" ]; then
+            echo "# Changelog" > CHANGELOG.md
+            echo "Initial version" >> CHANGELOG.md
+            echo "" >> CHANGELOG.md
+          fi
+          
+          # 将生成的release_notes.md内容添加到CHANGELOG.md
+          echo "## $main_tag ($(date +%Y-%m-%d))" >> CHANGELOG.md
+          cat release_notes.md >> CHANGELOG.md
+          echo "" >> CHANGELOG.md
+          
           git add CHANGELOG.md
+          
           # 检查是否有变更
           if git diff --staged --quiet; then
             echo "No changes to CHANGELOG.md"
