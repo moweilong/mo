@@ -1,4 +1,4 @@
-name: Manage Tags and Changelog
+name: Manage Submodule Tags and Changelog
 
 on:
   push:
@@ -9,6 +9,7 @@ on:
 env:
   TZ: Asia/Shanghai
   GITHUB_TOKEN: ${{ secrets.MO_TOKEN }}
+  MAIN_BRANCH: main # 主分支名称，根据实际情况修改
 
 jobs:
   Manage-Releases:
@@ -18,6 +19,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+          ref: ${{ env.MAIN_BRANCH }} # 切换到主分支，避免在标签的detached HEAD状态提交
 
       - name: Configure Git
         run: |
@@ -29,12 +31,27 @@ jobs:
           main_tag=${GITHUB_REF#refs/tags/}
           directories=("entx")
           
+          echo "Starting submodule tag creation for main tag: $main_tag"
+          
           for dir in "${directories[@]}"; do
+            # 检查目录是否存在
+            if [ ! -d "$dir" ]; then
+              echo "Directory $dir does not exist, skipping"
+              continue
+            fi
+            
+            # 为每个找到的go.mod文件创建子模块标签
             find "$dir" -name "go.mod" | sort -u | while read -r file; do
               submodule_path=$(dirname "$file")
               submodule_tag="${submodule_path}/${main_tag}"
               
-              if ! git rev-parse "$submodule_tag" >/dev/null 2>&1; then
+              echo "Processing submodule: $submodule_path"
+              
+              # 检查标签是否已存在
+              if git rev-parse "$submodule_tag" >/dev/null 2>&1; then
+                echo "Tag $submodule_tag already exists, skipping"
+              else
+                echo "Creating and pushing tag: $submodule_tag"
                 git tag "$submodule_tag"
                 git push origin "$submodule_tag"
               fi
@@ -44,6 +61,8 @@ jobs:
       - name: Generate Release Notes
         id: release_notes
         run: |
+          main_tag=${GITHUB_REF#refs/tags/}
+          
           # 提取两个标签之间的提交记录
           if [ $(git tag --list | wc -l) -lt 2 ]; then
             echo "All changes in this release:" > release_notes.md
@@ -54,24 +73,31 @@ jobs:
             git log --pretty=format:"- %s" $prev_tag..$main_tag >> release_notes.md
           fi
           
-          # 使用base64编码避免特殊字符问题
-          echo "RELEASE_NOTES=$(base64 -w 0 release_notes.md)" >> $GITHUB_ENV
+          # 输出到步骤变量
+          echo "release_notes<<DELIMITER" >> $GITHUB_OUTPUT
+          cat release_notes.md >> $GITHUB_OUTPUT
+          echo "DELIMITER" >> $GITHUB_OUTPUT
 
       - name: Commit CHANGELOG Updates
         run: |
           main_tag=${GITHUB_REF#refs/tags/}
+          current_date=$(date +%Y-%m-%d)
           
           # 确保CHANGELOG.md文件存在
           if [ ! -f "CHANGELOG.md" ]; then
             echo "# Changelog" > CHANGELOG.md
-            echo "Initial version" >> CHANGELOG.md
             echo "" >> CHANGELOG.md
           fi
           
-          # 将生成的release_notes.md内容添加到CHANGELOG.md
-          echo "## $main_tag ($(date +%Y-%m-%d))" >> CHANGELOG.md
-          cat release_notes.md >> CHANGELOG.md
-          echo "" >> CHANGELOG.md
+          # 创建临时文件，将新版本内容添加到开头
+          echo "## $main_tag ($current_date)" > temp_changelog.md
+          echo "" >> temp_changelog.md
+          cat release_notes.md >> temp_changelog.md
+          echo "" >> temp_changelog.md
+          cat CHANGELOG.md >> temp_changelog.md
+          
+          # 替换原文件
+          mv temp_changelog.md CHANGELOG.md
           
           git add CHANGELOG.md
           
@@ -80,7 +106,7 @@ jobs:
             echo "No changes to CHANGELOG.md"
           else
             git commit -m "docs: update CHANGELOG.md for $main_tag"
-            git push origin ${{ github.ref_name }}
+            git push origin ${{ env.MAIN_BRANCH }} # 推送到主分支而非标签
           fi
 
       - name: Create GitHub Release
