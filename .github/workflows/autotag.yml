@@ -45,17 +45,23 @@ jobs:
         id: release_notes
         run: |
           # 提取两个标签之间的提交记录
-          prev_tag=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
-          echo "Changes since $prev_tag:" > release_notes.md
-          git log --pretty=format:"- %s" $prev_tag..$main_tag >> release_notes.md
-          echo "RELEASE_NOTES<<EOF" >> $GITHUB_ENV
-          cat release_notes.md >> $GITHUB_ENV
-          echo "EOF" >> $GITHUB_ENV
+          if [ $(git tag --list | wc -l) -lt 2 ]; then
+            echo "All changes in this release:" > release_notes.md
+            git log --pretty=format:"- %s" >> release_notes.md
+          else
+            prev_tag=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+            echo "Changes since $prev_tag:" > release_notes.md
+            git log --pretty=format:"- %s" $prev_tag..$main_tag >> release_notes.md
+          fi
+          
+          # 使用base64编码避免特殊字符问题
+          echo "RELEASE_NOTES=$(base64 -w 0 release_notes.md)" >> $GITHUB_ENV
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          body: ${{ env.RELEASE_NOTES }}
+          # 解码base64内容
+          body: ${{ fromBase64(env.RELEASE_NOTES) }}
           files: |
             CHANGELOG.md
           tag_name: ${{ github.ref_name }}
