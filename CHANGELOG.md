@@ -19,14 +19,27 @@
 
 * **Added**：升级依赖的 `grpc-client` 版本至 v1.6.2
 
-
 ## [v0.2.0] - 2025-10-14
-
-> 说明：次版本（首次引入子模块），对应标签：v0.2.0
 
 ### 主项目变更
 
-* **Added**：新增 Github Action 自动发布
+* **Added**：none
+
+### 子模块变更
+
+#### entx
+
+* **Added**：新增 `entx/update` 子目录，提供一组用于构建和执行 SQL 更新操作的工具函数，特别适用于处理 NULL 值和 JSON 字段的更新场景。详情请参考 [update 子目录](./entx/update/README.md)
+
+## [v0.1.0] - 2025-10-14
+
+> 说明：次版本（首次引入子模块），对应标签：v0.1.0
+
+### 主项目变更
+
+* **Added**：新增stringcase和fieldmaskutil包，提供字符串命名法转换功能（驼峰式、蛇形、烤肉串等），以及用于处理 Protocol Buffers 字段掩码（FieldMask）的工具包。
+
+
 
 ### 子模块变更
 
