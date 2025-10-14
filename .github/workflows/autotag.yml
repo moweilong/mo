@@ -19,19 +19,35 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          ref: ${{ env.MAIN_BRANCH }} # 切换到主分支，避免在标签的detached HEAD状态提交
+          ref: ${{ env.MAIN_BRANCH }} # 切换到主分支
 
       - name: Configure Git
         run: |
           git config --global user.email "kalandramo@gmail.com"
           git config --global user.name "moweilong"
 
-      - name: Create Submodule Tags
+      - name: Get Previous Tag
+        id: get_prev_tag
         run: |
+          # 获取上一个标签，如果不存在则设为空
+          if [ $(git tag --list | wc -l) -lt 2 ]; then
+            echo "prev_tag=" >> $GITHUB_OUTPUT
+          else
+            prev_tag=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
+            echo "prev_tag=$prev_tag" >> $GITHUB_OUTPUT
+          fi
+          # 当前标签
           main_tag=${GITHUB_REF#refs/tags/}
+          echo "main_tag=$main_tag" >> $GITHUB_OUTPUT
+
+      - name: Create Submodule Tags (With Change Check)
+        run: |
+          main_tag=${{ steps.get_prev_tag.outputs.main_tag }}
+          prev_tag=${{ steps.get_prev_tag.outputs.prev_tag }}
           directories=("entx")
           
           echo "Starting submodule tag creation for main tag: $main_tag"
+          echo "Comparing with previous tag: ${prev_tag:-none}"
           
           for dir in "${directories[@]}"; do
             # 检查目录是否存在
@@ -40,79 +56,41 @@ jobs:
               continue
             fi
             
-            # 为每个找到的go.mod文件创建子模块标签
+            # 为每个找到的go.mod文件检查变更并创建标签
             find "$dir" -name "go.mod" | sort -u | while read -r file; do
               submodule_path=$(dirname "$file")
-              submodule_tag="${submodule_path}/${main_tag}"
+              submodule_tag="${submodule_path//\//-}-${main_tag}"  # 用连字符替换斜杠，避免路径问题
               
               echo "Processing submodule: $submodule_path"
               
               # 检查标签是否已存在
               if git rev-parse "$submodule_tag" >/dev/null 2>&1; then
                 echo "Tag $submodule_tag already exists, skipping"
+                continue
+              fi
+              
+              # 检查子模块是否有变更
+              has_changes=0
+              
+              if [ -z "$prev_tag" ]; then
+                # 如果没有上一个标签，检查是否有任何提交
+                if [ -n "$(git log --pretty=format:'%h' -- "$submodule_path")" ]; then
+                  has_changes=1
+                fi
               else
-                echo "Creating and pushing tag: $submodule_tag"
+                # 比较与上一个标签之间的变更
+                if [ -n "$(git diff --name-only $prev_tag $main_tag -- "$submodule_path")" ]; then
+                  has_changes=1
+                fi
+              fi
+              
+              # 只有有变更时才创建标签
+              if [ $has_changes -eq 1 ]; then
+                echo "Changes detected in $submodule_path. Creating and pushing tag: $submodule_tag"
                 git tag "$submodule_tag"
                 git push origin "$submodule_tag"
+              else
+                echo "No changes detected in $submodule_path. Skipping tag creation."
               fi
             done
           done
-
-      - name: Generate Release Notes
-        id: release_notes
-        run: |
-          main_tag=${GITHUB_REF#refs/tags/}
-          
-          # 提取两个标签之间的提交记录
-          if [ $(git tag --list | wc -l) -lt 2 ]; then
-            echo "All changes in this release:" > release_notes.md
-            git log --pretty=format:"- %s" >> release_notes.md
-          else
-            prev_tag=$(git describe --abbrev=0 --tags $(git rev-list --tags --skip=1 --max-count=1))
-            echo "Changes since $prev_tag:" > release_notes.md
-            git log --pretty=format:"- %s" $prev_tag..$main_tag >> release_notes.md
-          fi
-          
-          # 输出到步骤变量
-          echo "release_notes<<DELIMITER" >> $GITHUB_OUTPUT
-          cat release_notes.md >> $GITHUB_OUTPUT
-          echo "DELIMITER" >> $GITHUB_OUTPUT
-
-      - name: Commit CHANGELOG Updates
-        run: |
-          main_tag=${GITHUB_REF#refs/tags/}
-          current_date=$(date +%Y-%m-%d)
-          
-          # 确保CHANGELOG.md文件存在
-          if [ ! -f "CHANGELOG.md" ]; then
-            echo "# Changelog" > CHANGELOG.md
-            echo "" >> CHANGELOG.md
-          fi
-          
-          # 创建临时文件，将新版本内容添加到开头
-          echo "## $main_tag ($current_date)" > temp_changelog.md
-          echo "" >> temp_changelog.md
-          cat release_notes.md >> temp_changelog.md
-          echo "" >> temp_changelog.md
-          cat CHANGELOG.md >> temp_changelog.md
-          
-          # 替换原文件
-          mv temp_changelog.md CHANGELOG.md
-          
-          git add CHANGELOG.md
-          
-          # 检查是否有变更
-          if git diff --staged --quiet; then
-            echo "No changes to CHANGELOG.md"
-          else
-            git commit -m "docs: update CHANGELOG.md for $main_tag"
-            git push origin ${{ env.MAIN_BRANCH }} # 推送到主分支而非标签
-          fi
-
-      - name: Create GitHub Release
-        uses: softprops/action-gh-release@v1
-        with:
-          body: ${{ steps.release_notes.outputs.release_notes }}
-          files: |
-            CHANGELOG.md
-          tag_name: ${{ github.ref_name }}
