@@ -10,7 +10,7 @@
 
 ### 主项目变更
 
-* **Added**：新增主项目功能（例：全局日志收集模块）
+* **Added**：新增 stringcase 子目录，提供字符串大小写转换功能：ToCamelCase(将字符串转换为驼峰式命名法)、ToPascalCase(将字符串转换为帕斯卡命名法)、ToSnakeCase(将字符串转换为蛇形命名法)、ToKebabCase(将字符串转换为烤肉串命名法)，详情请参考 [stringcase 子目录](./stringcase/README.md)
 
 
 ### 子模块变更
@@ -42,7 +42,7 @@
 
 
 
-* **Added**：byteutil 子目录，提供字节数组工具方法
+* **Added**：byteutil 子目录，提供字节和整数转换以及字符大小写转换功能：IntToBytes(将int转为[]byte)、BytesToInt(将[]byte转为int)、ByteToLower(字节转小写)、ByteToUpper(字节转大写)
 
 * **Fixed**：none
 
