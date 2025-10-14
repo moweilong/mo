@@ -59,7 +59,7 @@ jobs:
             # 为每个找到的go.mod文件检查变更并创建标签
             find "$dir" -name "go.mod" | sort -u | while read -r file; do
               submodule_path=$(dirname "$file")
-              submodule_tag="${submodule_path//\//-}-${main_tag}"  # 用连字符替换斜杠，避免路径问题
+              submodule_tag="${submodule_path}/${main_tag}"
               
               echo "Processing submodule: $submodule_path"
               
