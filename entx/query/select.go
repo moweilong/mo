@@ -18,11 +18,11 @@ func BuildFieldSelect(s *sql.Selector, fields []string) {
 	}
 }
 
-func BuildFieldSelector(fields []string) (error, func(s *sql.Selector)) {
+func BuildFieldSelector(fields []string) (func(s *sql.Selector), error) {
 	if len(fields) > 0 {
-		return nil, func(s *sql.Selector) {
+		return func(s *sql.Selector) {
 			BuildFieldSelect(s, fields)
-		}
+		}, nil
 	} else {
 		return nil, nil
 	}

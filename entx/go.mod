@@ -9,11 +9,10 @@ require (
 	github.com/go-kratos/kratos/v2 v2.9.1
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
-	github.com/moweilong/mo v0.3.0
+	github.com/moweilong/mo v0.4.0
 	github.com/moweilong/mo/id v0.3.3
 	github.com/prometheus/client_golang v1.23.2
 	github.com/stretchr/testify v1.11.1
-	github.com/tx7do/go-utils v1.1.29
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/exporters/prometheus v0.60.0
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.38.0

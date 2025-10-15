@@ -133,7 +133,7 @@ func TestBuildQuerySelectorDefault(t *testing.T) {
 			checker := assert.New(t)
 			s := sql.Dialect(tc.dialect).Select("*").From(sql.Table("users"))
 
-			err, _, querySelectors := BuildQuerySelector(tc.and, tc.or,
+			_, querySelectors, err := BuildQuerySelector(tc.and, tc.or,
 				1, 10, tc.noPaging,
 				[]string{}, "created_at",
 				[]string{},

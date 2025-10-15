@@ -7,12 +7,12 @@ import (
 )
 
 // QueryCommandToOrderConditions 查询命令转换为排序条件
-func QueryCommandToOrderConditions(orderBys []string) (error, func(s *sql.Selector)) {
+func QueryCommandToOrderConditions(orderBys []string) (func(s *sql.Selector), error) {
 	if len(orderBys) == 0 {
 		return nil, nil
 	}
 
-	return nil, func(s *sql.Selector) {
+	return func(s *sql.Selector) {
 		for _, v := range orderBys {
 			if strings.HasPrefix(v, "-") {
 				// 降序
@@ -31,7 +31,7 @@ func QueryCommandToOrderConditions(orderBys []string) (error, func(s *sql.Select
 				BuildOrderSelect(s, v, false)
 			}
 		}
-	}
+	}, nil
 }
 
 func BuildOrderSelect(s *sql.Selector, field string, desc bool) {
@@ -42,11 +42,11 @@ func BuildOrderSelect(s *sql.Selector, field string, desc bool) {
 	}
 }
 
-func BuildOrderSelector(orderBys []string, defaultOrderField string) (error, func(s *sql.Selector)) {
+func BuildOrderSelector(orderBys []string, defaultOrderField string) (func(s *sql.Selector), error) {
 	if len(orderBys) == 0 {
-		return nil, func(s *sql.Selector) {
+		return func(s *sql.Selector) {
 			BuildOrderSelect(s, defaultOrderField, true)
-		}
+		}, nil
 	} else {
 		return QueryCommandToOrderConditions(orderBys)
 	}

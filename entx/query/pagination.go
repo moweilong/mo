@@ -3,7 +3,7 @@ package query
 import (
 	"entgo.io/ent/dialect/sql"
 
-	paging "github.com/tx7do/go-utils/pagination"
+	paging "github.com/moweilong/mo/pagination"
 )
 
 func BuildPaginationSelector(page, pageSize int32, noPaging bool) func(*sql.Selector) {

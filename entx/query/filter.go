@@ -143,33 +143,33 @@ func hasDatePart(str string) bool {
 }
 
 // BuildFilterSelector 构建过滤选择器
-func BuildFilterSelector(andFilterJsonString, orFilterJsonString string) (error, []func(s *sql.Selector)) {
+func BuildFilterSelector(andFilterJsonString, orFilterJsonString string) ([]func(s *sql.Selector), error) {
 	var err error
 	var queryConditions []func(s *sql.Selector)
 
 	var andSelector func(s *sql.Selector)
-	err, andSelector = QueryCommandToWhereConditions(andFilterJsonString, false)
+	andSelector, err = QueryCommandToWhereConditions(andFilterJsonString, false)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	if andSelector != nil {
 		queryConditions = append(queryConditions, andSelector)
 	}
 
 	var orSelector func(s *sql.Selector)
-	err, orSelector = QueryCommandToWhereConditions(orFilterJsonString, true)
+	orSelector, err = QueryCommandToWhereConditions(orFilterJsonString, true)
 	if err != nil {
-		return err, nil
+		return nil, err
 	}
 	if orSelector != nil {
 		queryConditions = append(queryConditions, orSelector)
 	}
 
-	return nil, queryConditions
+	return queryConditions, nil
 }
 
 // QueryCommandToWhereConditions 查询命令转换为选择条件
-func QueryCommandToWhereConditions(strJson string, isOr bool) (error, func(s *sql.Selector)) {
+func QueryCommandToWhereConditions(strJson string, isOr bool) (func(s *sql.Selector), error) {
 	if len(strJson) == 0 {
 		return nil, nil
 	}
@@ -180,11 +180,11 @@ func QueryCommandToWhereConditions(strJson string, isOr bool) (error, func(s *sq
 	var queryMapArray []map[string]string
 	if err1 := codec.Unmarshal([]byte(strJson), &queryMap); err1 != nil {
 		if err2 := codec.Unmarshal([]byte(strJson), &queryMapArray); err2 != nil {
-			return err2, nil
+			return nil, err2
 		}
 	}
 
-	return nil, func(s *sql.Selector) {
+	return func(s *sql.Selector) {
 		var ps []*sql.Predicate
 		ps = append(ps, processQueryMap(s, queryMap)...)
 		for _, v := range queryMapArray {
@@ -196,7 +196,7 @@ func QueryCommandToWhereConditions(strJson string, isOr bool) (error, func(s *sq
 		} else {
 			s.Where(sql.And(ps...))
 		}
-	}
+	}, nil
 }
 
 // processQueryMap 处理查询映射表
@@ -527,20 +527,17 @@ func filterRegex(s *sql.Selector, p *sql.Predicate, field, value string) *sql.Pr
 		case dialect.Postgres:
 			b.Ident(s.C(field)).WriteString(" ~ ")
 			b.Arg(value)
-			break
 
 		case dialect.MySQL:
 			b.Ident(s.C(field)).WriteString(" REGEXP BINARY ")
 			b.Arg(value)
-			break
 
 		case dialect.SQLite:
 			b.Ident(s.C(field)).WriteString(" REGEXP ")
 			b.Arg(value)
-			break
 
 		case dialect.Gremlin:
-			break
+
 		}
 	})
 	return p
@@ -557,12 +554,10 @@ func filterInsensitiveRegex(s *sql.Selector, p *sql.Predicate, field, value stri
 		case dialect.Postgres:
 			b.Ident(s.C(field)).WriteString(" ~* ")
 			b.Arg(strings.ToLower(value))
-			break
 
 		case dialect.MySQL:
 			b.Ident(s.C(field)).WriteString(" REGEXP ")
 			b.Arg(strings.ToLower(value))
-			break
 
 		case dialect.SQLite:
 			b.Ident(s.C(field)).WriteString(" REGEXP ")
@@ -570,10 +565,9 @@ func filterInsensitiveRegex(s *sql.Selector, p *sql.Predicate, field, value stri
 				value = "(?i)" + value
 			}
 			b.Arg(strings.ToLower(value))
-			break
 
 		case dialect.Gremlin:
-			break
+
 		}
 	})
 	return p
@@ -599,13 +593,11 @@ func filterDatePart(s *sql.Selector, p *sql.Predicate, datePart, field string) *
 			str := fmt.Sprintf("EXTRACT('%s' FROM %s)", strings.ToUpper(datePart), s.C(field))
 			b.WriteString(str)
 			//b.Arg(strings.ToLower(value))
-			break
 
 		case dialect.MySQL:
 			str := fmt.Sprintf("%s(%s)", strings.ToUpper(datePart), s.C(field))
 			b.WriteString(str)
 			//b.Arg(strings.ToLower(value))
-			break
 		}
 	})
 	return p
@@ -618,12 +610,11 @@ func filterDatePartField(s *sql.Selector, datePart, field string) string {
 	case dialect.Postgres:
 		str := fmt.Sprintf("EXTRACT('%s' FROM %s)", strings.ToUpper(datePart), s.C(field))
 		p.WriteString(str)
-		break
 
 	case dialect.MySQL:
 		str := fmt.Sprintf("%s(%s)", strings.ToUpper(datePart), s.C(field))
 		p.WriteString(str)
-		break
+
 	}
 
 	return p.String()
@@ -639,13 +630,12 @@ func filterJsonb(s *sql.Selector, p *sql.Predicate, jsonbField, field string) *s
 		case dialect.Postgres:
 			b.Ident(s.C(field)).WriteString(" ->> ").WriteString("'" + jsonbField + "'")
 			//b.Arg(strings.ToLower(value))
-			break
 
 		case dialect.MySQL:
 			str := fmt.Sprintf("JSON_EXTRACT(%s, '$.%s')", s.C(field), jsonbField)
 			b.WriteString(str)
 			//b.Arg(strings.ToLower(value))
-			break
+
 		}
 	})
 	return p
@@ -660,13 +650,12 @@ func filterJsonbField(s *sql.Selector, jsonbField, field string) string {
 	case dialect.Postgres:
 		p.Ident(s.C(field)).WriteString(" ->> ").WriteString("'" + jsonbField + "'")
 		//b.Arg(strings.ToLower(value))
-		break
 
 	case dialect.MySQL:
 		str := fmt.Sprintf("JSON_EXTRACT(%s, '$.%s')", s.C(field), jsonbField)
 		p.WriteString(str)
 		//b.Arg(strings.ToLower(value))
-		break
+
 	}
 
 	return p.String()
