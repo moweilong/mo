@@ -44,7 +44,7 @@ jobs:
         run: |
           main_tag=${{ steps.get_prev_tag.outputs.main_tag }}
           prev_tag=${{ steps.get_prev_tag.outputs.prev_tag }}
-          directories=("entx")
+          directories=("entx id")
           
           echo "Starting submodule tag creation for main tag: $main_tag"
           echo "Comparing with previous tag: ${prev_tag:-none}"
