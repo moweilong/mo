@@ -6,12 +6,14 @@ require (
 	entgo.io/contrib v0.7.0
 	entgo.io/ent v0.14.5
 	github.com/XSAM/otelsql v0.40.0
+	github.com/go-kratos/kratos/v2 v2.9.1
 	github.com/go-sql-driver/mysql v1.9.3
 	github.com/google/uuid v1.6.0
-	github.com/moweilong/mo v0.1.0
+	github.com/moweilong/mo v0.3.0
+	github.com/moweilong/mo/id v0.3.3
 	github.com/prometheus/client_golang v1.23.2
 	github.com/stretchr/testify v1.11.1
-	github.com/tx7do/go-utils/id v0.0.2
+	github.com/tx7do/go-utils v1.1.29
 	go.opentelemetry.io/otel v1.38.0
 	go.opentelemetry.io/otel/exporters/prometheus v0.60.0
 	go.opentelemetry.io/otel/exporters/stdout/stdouttrace v1.38.0
@@ -49,11 +51,10 @@ require (
 	github.com/prometheus/procfs v0.17.0 // indirect
 	github.com/rs/xid v1.6.0 // indirect
 	github.com/segmentio/ksuid v1.0.4 // indirect
-	github.com/sony/sonyflake v1.2.1 // indirect
-	github.com/tx7do/go-utils v1.1.27 // indirect
+	github.com/sony/sonyflake v1.3.0 // indirect
 	github.com/zclconf/go-cty v1.14.4 // indirect
 	github.com/zclconf/go-cty-yaml v1.1.0 // indirect
-	go.mongodb.org/mongo-driver v1.17.3 // indirect
+	go.mongodb.org/mongo-driver v1.17.4 // indirect
 	go.opentelemetry.io/auto/sdk v1.1.0 // indirect
 	go.opentelemetry.io/otel/metric v1.38.0 // indirect
 	go.opentelemetry.io/otel/trace v1.38.0 // indirect

@@ -7,7 +7,7 @@ import (
 	"entgo.io/ent/schema/index"
 	"entgo.io/ent/schema/mixin"
 
-	"github.com/tx7do/go-utils/id"
+	"github.com/moweilong/mo/id"
 )
 
 var _ ent.Mixin = (*SnowflackId)(nil)

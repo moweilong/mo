@@ -22,3 +22,7 @@ Go 代码库
 
 - **id**：提供一组用于生成和解析 UUID 的工具函数，包括生成随机 UUID、解析 UUID 字符串等。
   [id](id/README.md)
+
+- **ip**：提供一组用于获取出站 IP 地址的工具函数，包括使用默认 DNS 服务器和指定 DNS 服务器的方法。详情请参考 [ip 子目录](./ip/README.md)
+
+- **pagination**：提供一组用于分页查询的工具函数，包括构建分页查询参数、解析分页查询结果等。详情请参考 [pagination 子目录](./pagination/README.md)

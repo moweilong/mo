@@ -198,4 +198,4 @@ orderId := id.GenerateOrderIdWithPrefixSnowflake(1, "ORD-")
 - go.mongodb.org/mongo-driver/bson/primitive
 - github.com/bwmarrin/snowflake
 - github.com/sony/sonyflake
-- github.com/tx7do/go-utils/trans
+- github.com/moweilong/mo/trans
