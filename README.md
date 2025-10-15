@@ -16,3 +16,9 @@ Go 代码库
 
 - **fieldmaskutil**：用于处理 Protocol Buffers 字段掩码（FieldMask）的工具包。
   [fieldmaskutil](fieldmaskutil/README.md)
+
+- **trans**：提供一组通用的转换函数，包括字符串大小写转换、UUID 转换、时间转换等。
+  [trans](trans/README.md)
+
+- **id**：提供一组用于生成和解析 UUID 的工具函数，包括生成随机 UUID、解析 UUID 字符串等。
+  [id](id/README.md)

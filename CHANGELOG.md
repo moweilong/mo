@@ -10,14 +10,14 @@
 
 ### 主项目变更
 
-* **Added**：新增 stringcase 子目录，提供字符串大小写转换功能：ToCamelCase(将字符串转换为驼峰式命名法)、ToPascalCase(将字符串转换为帕斯卡命名法)、ToSnakeCase(将字符串转换为蛇形命名法)、ToKebabCase(将字符串转换为烤肉串命名法)，详情请参考 [stringcase 子目录](./stringcase/README.md)
+* **Added**：新增 `trans` 子目录，提供一组通用的转换函数，包括字符串大小写转换、UUID 转换、时间转换等。详情请参考 [trans 子目录](./trans/README.md)
 
 
 ### 子模块变更
 
-#### entx/client
+#### id
 
-* **Added**：升级依赖的 `grpc-client` 版本至 v1.6.2
+* **Added**：新增 `id` 子目录，提供一组用于生成和解析 UUID 的工具函数，包括生成随机 UUID、解析 UUID 字符串等。详情请参考 [id 子目录](./id/README.md)
 
 ## [v0.3.0] - 2025-10-15
 
