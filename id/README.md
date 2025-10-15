@@ -98,7 +98,8 @@ orderId := id.GenerateOrderIdWithRandom("ORD", &customTime)
 orderId := id.GenerateOrderIdWithIncreaseIndex("ORD", nil)
 
 // 生成带商户 ID 的订单号
-orderId := id.GenerateOrderIdWithTenantId("MERCH") // 输出类似: 20250604123456MERCH7890
+// 输出类似: 20250604123456MERCH12345678 (商户ID不足5位时会在右侧补零)
+orderId := id.GenerateOrderIdWithTenantId("MERCH")
 
 // 生成带前缀的 Sonyflake 订单号
 orderId := id.GenerateOrderIdWithPrefixSonyflake("ORD-")
@@ -181,7 +182,7 @@ orderId := id.GenerateOrderIdWithPrefixSnowflake(1, "ORD-")
 
 - 随机数订单ID：前缀 + 14位时间戳 + 4位随机数
 - 自增索引订单ID：前缀 + 14位时间戳 + 自增索引
-- 商户ID订单ID：14位时间戳 + 5位商户ID + 4位随机数
+- 商户ID订单ID：14位时间戳 + 5位商户ID（右侧补零） + 8位随机数（由纳秒时间戳的前4位和4位随机数组成）
 
 ## 版本要求
 
