@@ -115,6 +115,7 @@ orderId := id.GenerateOrderIdWithPrefixSnowflake(1, "ORD-")
 - 微信支付：1589123456789012345（类似 Snowflake 的纯数字 ID）。
 - 美团订单：202506041234567890123（时间戳 + 商户 ID + 随机数）。
 
+
 ## ID 类型比较
 
 | 特性    | GUID/UUID    | KSUID      | ShortUUID | XID      | Snowflake      |
