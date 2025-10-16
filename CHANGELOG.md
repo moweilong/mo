@@ -10,8 +10,26 @@
 
 ### 主项目变更
 
-* **Added**：none
+* **Added**: 新增 `log` 子目录，提供一组用于日志记录的工具函数，包括日志级别、日志格式、日志输出等。详情请参考 [log 子目录](./log/README.md)
+* **Added**：新增 `cache` 子目录，提供一组用于操作缓存的工具函数，包括设置缓存、获取缓存、删除缓存等。详情请参考 [cache 子目录](./cache/README.md)
+* **Added**：新增 `gormx` 子目录, 提供一组用于操作 GORM 数据库的工具函数。详情请参考 [gormx 子目录](./gormx/README.md)
+* **Added**：新增 `options` 子目录，提供一组用于配置数据库连接的选项函数，包括 MySQL、PostgreSQL 等数据库的连接选项。详情请参考 [options 子目录](./options/README.md)
+* **Changed**：`ip` 子目录已替换为 `net` 子目录，提供一组用于获取出站 IP 地址的工具函数，包括使用默认 DNS 服务器和指定 DNS 服务器的方法。详情请参考 [net 子目录](./net/README.md)
 
+
+### 子模块变更
+
+none
+
+## [v0.5.0] - 2025-10-16
+
+### 主项目变更
+
+* **Added**: 新增 `log` 子目录，提供一组用于日志记录的工具函数，包括日志级别、日志格式、日志输出等。详情请参考 [log 子目录](./log/README.md)
+* **Added**：新增 `cache` 子目录，提供一组用于操作缓存的工具函数，包括设置缓存、获取缓存、删除缓存等。详情请参考 [cache 子目录](./cache/README.md)
+* **Added**：新增 `gormx` 子目录, 提供一组用于操作 GORM 数据库的工具函数。详情请参考 [gormx 子目录](./gormx/README.md)
+* **Added**：新增 `options` 子目录，提供一组用于配置数据库连接的选项函数，包括 MySQL、PostgreSQL 等数据库的连接选项。详情请参考 [options 子目录](./options/README.md)
+* **Changed**：`ip` 子目录已替换为 `net` 子目录，提供一组用于获取出站 IP 地址的工具函数，包括使用默认 DNS 服务器和指定 DNS 服务器的方法。详情请参考 [net 子目录](./net/README.md)
 
 ### 子模块变更
 

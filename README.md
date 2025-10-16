@@ -23,6 +23,14 @@ Go 代码库
 - **id**：提供一组用于生成和解析 UUID 的工具函数，包括生成随机 UUID、解析 UUID 字符串等。
   [id](id/README.md)
 
-- **ip**：提供一组用于获取出站 IP 地址的工具函数，包括使用默认 DNS 服务器和指定 DNS 服务器的方法。详情请参考 [ip 子目录](./ip/README.md)
+- **netutil**：提供一组用于网络操作的工具函数，包括获取出站 IP 地址、解析 IP 地址等。详情请参考 [netutil 子目录](./netutil/README.md)
 
 - **pagination**：提供一组用于分页查询的工具函数，包括构建分页查询参数、解析分页查询结果等。详情请参考 [pagination 子目录](./pagination/README.md)
+
+- **cache**：提供一组用于操作缓存的工具函数，包括设置缓存、获取缓存、删除缓存等。详情请参考 [cache 子目录](./cache/README.md)
+
+- **gormx**：提供一组用于操作 GORM 数据库的工具函数。详情请参考 [gormx 子目录](./gormx/README.md)
+
+- **log**：提供一组用于日志记录的工具函数，包括日志级别、日志格式等。详情请参考 [log 子目录](./log/README.md)
+
+- **options**：提供一组用于配置数据库连接的选项函数，包括 MySQL、PostgreSQL 等数据库的连接选项。详情请参考 [options 子目录](./options/README.md)
