@@ -58,3 +58,5 @@ Go 代码库
 - **mapper**：提供一组用于对象之间数据转换的工具函数，包括结构体映射、字段映射等。详情请参考 [mapper 子目录](./mapper/README.md)
 
 - **timeutil**：提供一组用于时间操作的工具函数，包括时间格式化、时间解析、时间计算等。详情请参考 [timeutil 子目录](./timeutil/README.md)
+
+- **copierutil**：提供一组用于对象之间数据转换的工具函数，包括结构体映射、字段映射等。详情请参考 [copierutil 子目录](./copierutil/README.md)
