@@ -10,21 +10,23 @@
 
 ### 主项目变更
 
-* **Added**: 新增 `version` 子目录，提供一组用于版本管理的工具函数，包括获取当前版本、设置动态版本等。详情请参考 [version 子目录](./version/README.md)
-* **Added**: 新增 `server` 子目录，提供一组用于启动 HTTP 服务器的工具函数，包括设置路由、处理请求、启动服务器等。详情请参考 [server 子目录](./server/README.md)
-* **Added**: 新增 `errorsx` 子目录，提供一组用于处理错误的工具函数，包括自定义错误类型、错误转换、错误处理等。详情请参考 [errorsx 子目录](./errorsx/README.md)
-* **Added**: 新增 `app` 子目录，提供一组用于应用程序初始化、配置加载、路由设置等的工具函数。详情请参考 [app 子目录](./app/README.md)
-* **Added**: 新增 `core` 子目录，提供一组用于 Gin 框架的核心工具函数，包括路由设置、中间件设置、请求处理等。详情请参考 [core 子目录](./core/README.md)
-* **Added**: 新增 `idx` 子目录，提供一组用于生成唯一索引的工具函数，包括基于 Snowflake 算法的索引生成器等。详情请参考 [idx 子目录](./idx/README.md)
-* **Added**: 新增 `store` 子目录，提供一组用于操作数据库的工具函数，包括查询、插入、更新、删除等操作。详情请参考 [store 子目录](./store/README.md)
-* **Added**: 新增 `validation` 子目录，提供一组用于验证数据的工具函数，包括结构体验证、字段验证、错误处理等。详情请参考 [validation 子目录](./validation/README.md)
-* **Added**: 新增 `rid` 子目录，提供一组用于生成唯一资源标识符的工具函数，包括基于 Snowflake 算法的标识符生成器等。详情请参考 [rid 子目录](./rid/README.md)
-* **Added**: 新增 `i18n` 子目录，提供一组用于国际化的工具函数，包括加载语言资源、翻译文本等。详情请参考 [i18n 子目录](./i18n/README.md)
+* **Added**: 新增 `timeutil` 子目录，提供一组用于时间操作的工具函数，包括时间格式化、时间解析、时间计算等。详情请参考 [timeutil 子目录](./timeutil/README.md)
 
 
 ### 子模块变更
 
-none
+* **Added**: 新增 `mapper` 子目录，提供一组用于对象之间数据转换的工具函数，包括结构体映射、字段映射等。详情请参考 [mapper 子目录](./mapper/README.md)
+
+## [v0.7.0] - 2025-10-17
+
+### 主项目变更
+
+* **Added**: 新增 `timeutil` 子目录，提供一组用于时间操作的工具函数，包括时间格式化、时间解析、时间计算等。详情请参考 [timeutil 子目录](./timeutil/README.md)
+
+
+### 子模块变更
+
+* **Added**: 新增 `mapper` 子目录，提供一组用于对象之间数据转换的工具函数，包括结构体映射、字段映射等。详情请参考 [mapper 子目录](./mapper/README.md)
 
 ## [v0.6.0] - 2025-10-16
 
